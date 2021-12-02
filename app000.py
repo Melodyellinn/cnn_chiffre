@@ -4,7 +4,7 @@
 # In[12]:
 import os
 import numpy as np
-from opencv_python import cv2
+import cv2
 from tensorflow.keras.models import load_model
 import streamlit as st
 from streamlit_drawable_canvas import st_canvas
