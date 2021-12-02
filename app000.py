@@ -1,10 +1,13 @@
 #!/usr/bin/env python
+
 # coding: utf-8
 
 # In[12]:
 import os
+import tensorflow as tf
 import numpy as np
-import cv2
+#import cv2
+from PIL import Image
 from tensorflow.keras.models import load_model
 import streamlit as st
 from streamlit_drawable_canvas import st_canvas
@@ -37,17 +40,27 @@ canvas_result = st_canvas(
     key='canvas')
 
 if canvas_result.image_data is not None:
-    img2 = cv2.resize(canvas_result.image_data.astype('uint8'), (28, 28))
-    img = img2
-    img = img / 255.0
-    img = img.reshape(-1,28,28,1)
-    rescaled = cv2.resize(img2, (SIZE, SIZE), interpolation=cv2.INTER_NEAREST)
-    st.write('Model Input')
-    st.image(rescaled)
+    img = canvas_result.image_data
+    
+    image = Image.fromarray((img[:, :, 0]).astype(np.uint8))
+    image = image.resize((28, 28))
+    image = image.convert('L')
+    image = (tf.keras.utils.img_to_array(image)/255)
+    image = image.reshape(1,28,28,1)
+    test_x = tf.convert_to_tensor(image)
+
+    #img2 = cv2.resize(canvas_result.image_data.astype('uint8'), (28, 28))
+    #img = img2
+    #img = img / 255.0
+    #img = img.reshape(-1,28,28,1)
+    #rescaled = cv2.resize(img2, (SIZE, SIZE), interpolation=cv2.INTER_NEAREST)
+    #st.write('Model Input')
+    st.image(image)
 
 if st.button('Predict'):
-    test_x = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
-    val = model.predict(test_x.reshape(-1, 28, 28,1))
+    #test_x = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+    val = model.predict(test_x)
+    #.reshape(-1, 28, 28,1))
     st.write(f'result: {np.argmax(val[0])}')
     st.bar_chart(val[0])
     
