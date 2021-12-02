@@ -2,11 +2,9 @@
 # coding: utf-8
 
 # In[12]:
-
-
 import os
 import numpy as np
-import tensorflow as tf
+import cv2
 from tensorflow.keras.models import load_model
 import streamlit as st
 from streamlit_drawable_canvas import st_canvas
@@ -39,23 +37,17 @@ canvas_result = st_canvas(
     key='canvas')
 
 if canvas_result.image_data is not None:
-    img2 = tf.reshape(canvas_result.image_data.astype('uint8'), (28, 28))
+    img2 = cv2.resize(canvas_result.image_data.astype('uint8'), (28, 28))
     img = img2
     img = img / 255.0
-    img = img.reshape(-1,28,28,1) 
-    rescaled = tf.reshape(img2)
+    img = img.reshape(-1,28,28,1)
+    rescaled = cv2.resize(img2, (SIZE, SIZE), interpolation=cv2.INTER_NEAREST)
     st.write('Model Input')
     st.image(rescaled)
 
 if st.button('Predict'):
-    test_x = tf.image.rgb_to_grayscaler(img2)
-    val = model.predict(test_x.reshape(-1, 28, 28, 1))
+    test_x = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+    val = model.predict(test_x.reshape(-1, 28, 28,1))
     st.write(f'result: {np.argmax(val[0])}')
     st.bar_chart(val[0])
-
-
-# In[ ]:
-
-
-
-
+    
