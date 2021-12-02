@@ -48,7 +48,9 @@ if canvas_result.image_data is not None:
     image = (tf.keras.utils.img_to_array(image)/255)
     image = image.reshape(1,28,28,1)
     test_x = tf.convert_to_tensor(image)
-
+    
+    
+    #Version CV2 non supporté par streamlit
     #img2 = cv2.resize(canvas_result.image_data.astype('uint8'), (28, 28))
     #img = img2
     #img = img / 255.0
